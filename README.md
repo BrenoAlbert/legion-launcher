@@ -1,0 +1,21 @@
+﻿# ⚔️ Legion Launcher
+O projeto Legion tem o objetivo de agrupar todos os jogos instalados na máquina em uma só interface, oferecendo suporte às maiores lojas digitais de jogos como Steam, Epic Games, GOG, etc.
+
+## 📝 Checklist
+- [x] Suporte overlay Steam
+- [x] Persistência de Dados (JSON)
+- [ ] Gerenciamento de Biblioteca
+- [ ] Execução de Jogos
+- [ ] Interface de Usuário
+
+## 💻 Tecnologias utilizadas
+- C# (.NET)
+- Winforms
+
+## 💡 Aprendizado
+Esse projeto foi iniciado com o intuito de desenvolver habilidades em:
+- Lógica de Programação
+- Desenvolvimento de Interface Gráfica em C#
+- Uso de Frameworks e Bibliotecas C#
+- Organização de Código
+- Gerenciamento de Projeto
