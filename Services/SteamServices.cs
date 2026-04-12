@@ -9,7 +9,7 @@ namespace Legion.Services
 {
     internal static class SteamServices
     {
-        internal static string StartSteamGame(string appid)
+        internal static string GameStart(string appid)
         {
             string message = null;
 

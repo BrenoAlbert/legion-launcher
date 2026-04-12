@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Legion.Models
@@ -11,24 +12,16 @@ namespace Legion.Models
         private string name;
         private string appId;
         private string installDir;
-        public Game(string n, string id, string d)
-        {
-            this.installDir = d;
-            this.name = n;
-            this.appId = id;
-        }
 
-        public string Name
+        [JsonConstructor]
+        public Game(string Name, string AppId, string InstallDir)
         {
-            get { return this.name; }
+            this.Name = Name;
+            this.AppId = AppId;
+            this.InstallDir = InstallDir;
         }
-        public string AppId
-        {
-            get { return this.appId; }
-        }
-        public string InstallDir
-        {
-            get { return this.installDir; }
-        }        
+        public string Name { get; set; }
+        public string AppId { get; set; }
+        public string InstallDir { get; set; }                
     }
 }

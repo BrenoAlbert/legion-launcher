@@ -6,7 +6,7 @@ using Legion.Parsers;
 using Legion.Services;
 using Legion.Util;
 namespace Winforms
-{
+{    
     public partial class Main : Form
     {                       
         public Main()
@@ -15,7 +15,7 @@ namespace Winforms
 
             // TODO: DB local
             // achar um jeito de abrir um jogo usando a steam (dados em acf) :DONE
-            // criar cards gerando dinamicamente ao detectar jogos instalados
+            // criar cards/botões gerando dinamicamente ao detectar jogos instalados
             // ajeitar minimamente a UI
 
             // Sobrescrever FormBorder
@@ -42,8 +42,43 @@ namespace Winforms
         }
 
         private void Main_Load(object sender, EventArgs e)
-        {
+        {            
+            Game[] games = JsonParser.ReadJson();
+            
+            // Definir propriedades de elementos UI
+            gamesPanel.Dock = DockStyle.Fill;
+            gamesPanel.WrapContents = false;
+            gamesPanel.AutoScroll = true;
+            // END
+            
+            // Função adicionar botões dinamicamente
+            foreach (Game game in games)
+            {
+                Button btn = new Button();
+                btn.Text = game.Name;
+                btn.Tag = game;
 
+                btn.Width = 270;
+                btn.Height = 40;
+   
+                btn.Click += (sender, e) =>
+                {
+                    var g = (Game)((Button)sender).Tag;
+
+                    if (game.AppId != null)
+                    {
+                        SteamServices.GameStart(game.AppId);
+                    }
+                    else
+                    {
+                        GameServices.GameStart(game.InstallDir);
+                    }
+                };
+
+                gamesPanel.Controls.Add(btn);
+                
+            }
+            // END                        
         }
     }
 }

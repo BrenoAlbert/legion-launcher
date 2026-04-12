@@ -29,10 +29,13 @@
         private void InitializeComponent()
         {
             gamesBox = new GroupBox();
+            gamesPanel = new FlowLayoutPanel();
+            gamesBox.SuspendLayout();
             SuspendLayout();
             // 
             // gamesBox
             // 
+            gamesBox.Controls.Add(gamesPanel);
             gamesBox.ForeColor = SystemColors.Control;
             gamesBox.Location = new Point(12, 12);
             gamesBox.Name = "gamesBox";
@@ -40,6 +43,15 @@
             gamesBox.TabIndex = 0;
             gamesBox.TabStop = false;
             gamesBox.Text = "Games";
+            // 
+            // gamesPanel
+            // 
+            gamesPanel.Dock = DockStyle.Fill;
+            gamesPanel.FlowDirection = FlowDirection.TopDown;
+            gamesPanel.Location = new Point(3, 19);
+            gamesPanel.Name = "gamesPanel";
+            gamesPanel.Size = new Size(309, 555);
+            gamesPanel.TabIndex = 0;
             // 
             // Main
             // 
@@ -53,11 +65,14 @@
             Name = "Main";
             Text = "Form1";
             Load += Main_Load;
+            gamesBox.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
         private GroupBox gamesBox;
+        private Label label1;
+        private FlowLayoutPanel gamesPanel;
     }
 }

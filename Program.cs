@@ -2,15 +2,13 @@ namespace Winforms
 {
     internal static class Program
     {        
-        [STAThread]        
+        [STAThread]                
         static void Main(string[] args)
         {
             // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-
+            // see https://aka.ms/applicationconfiguration.           
             ApplicationConfiguration.Initialize();
-            Application.Run(new Main());
-            
+            Application.Run(new Main());            
         }
     }
 }
