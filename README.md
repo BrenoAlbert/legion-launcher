@@ -5,7 +5,7 @@ O projeto Legion tem o objetivo de agrupar todos os jogos instalados na máquina
 - [x] Suporte overlay Steam
 - [x] Persistência de Dados (JSON)
 - [ ] Gerenciamento de Biblioteca
-- [ ] Execução de Jogos
+- [x] Execução de Jogos
 - [ ] Interface de Usuário
 
 ## 💻 Tecnologias utilizadas
