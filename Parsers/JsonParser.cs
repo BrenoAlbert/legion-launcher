@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using System.Text.Json;
 
 using Legion.Models;
+using Legion.Util;
+using Legion.Services;
 
 namespace Legion.Parsers
 {
     internal class JsonParser
     {
-        public static async void WriteJson()
+        public static async void Write()
         {
             // escreve json em AppData Roaming
 
@@ -19,20 +21,23 @@ namespace Legion.Parsers
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Legion"
             );
-            Game[] gameInfo = AcfParser.GetGames('D');
+            Game[] gameInfo = Fetcher.FetchGames('D');
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            await using FileStream create = File.Create($"{folder}\\library.json");
-
-            await JsonSerializer.SerializeAsync(create, gameInfo, new JsonSerializerOptions
+            if (!File.Exists($"{folder}\\library.json"))
             {
-                WriteIndented = true
-            });
+                await using FileStream create = File.Create($"{folder}\\library.json");
+                await JsonSerializer.SerializeAsync(create, gameInfo, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+            }
+            
 
         }
-        public static Game[] ReadJson()
+        public static Game[] Read()
         {
             string folder = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -42,13 +47,15 @@ namespace Legion.Parsers
             string json = File.ReadAllText($"{folder}\\library.json");
             Game[] games = JsonSerializer.Deserialize<Game[]>(json);
             
+            /*
             foreach(Game game in games)
             {
                 Console.WriteLine(
                     $"{game.Name}\n"
                     );
             }
-            return games;
+            */
+            return Sorter.SortByName(games);
         }        
     }
 }
