@@ -9,7 +9,7 @@ using Legion.Parsers;
 
 namespace Legion.Util
 {
-    internal static class Sorter
+    internal static class GameSorter
     {
         public static Game[] SortByName(Game[] gameArray)
         {

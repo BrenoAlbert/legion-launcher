@@ -2,50 +2,84 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 using Legion.Models;
-using Legion.Util;
 using Legion.Services;
+using Legion.Util;
 
 namespace Legion.Parsers
 {
     internal class JsonParser
     {
-        public static async void Write()
-        {
-            // escreve json em AppData Roaming
+        // appdata roaming
+        private string folder;
+        // library: "library.json"
+        private string jsonPath;
 
-            string folder = Path.Combine(
+        public JsonParser(string fileName)
+        {
+            this.folder = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Legion"
             );
-            Game[] gameInfo = Fetcher.FetchGames('D');
+            this.jsonPath = $"{folder}\\{fileName}";
+
+        }
+
+        public async void WriteLibrary(Game[] gamesA)
+        {                                    
+            JsonSerializerOptions jso = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            
+            // /////////////////////////////////////////////////////////////
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            if (!File.Exists($"{folder}\\library.json"))
+            // função anônima para criar arquivo json
+            //
+            var createjson = async () =>
             {
-                await using FileStream create = File.Create($"{folder}\\library.json");
-                await JsonSerializer.SerializeAsync(create, gameInfo, new JsonSerializerOptions
+                await using FileStream stream = File.Create(jsonPath);
+                await JsonSerializer.SerializeAsync(stream, gamesA, jso);
+            };
+            //
+            // END
+
+            if (File.Exists(jsonPath))
+            {                
+                string gameJson = File.ReadAllText(jsonPath);
+                List<Game> gamesL = JsonSerializer.Deserialize<List<Game>>(gameJson);
+                
+                foreach (Game game in gamesA)
                 {
-                    WriteIndented = true
-                });
+                    if (!gamesL.Contains(game))
+                        gamesL.Add(game);
+                }
+
+                gamesA = GameSorter.SortByName(gamesL.ToArray());
+                await createjson();
+            }
+            else
+            {
+                await createjson();
             }
             
-
         }
-        public static Game[] Read()
+
+        public static Game[] ReadLibrary()
         {
             string folder = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Legion"
             );
-
-            string json = File.ReadAllText($"{folder}\\library.json");
-            Game[] games = JsonSerializer.Deserialize<Game[]>(json);
+            string jsonLibrary = File.ReadAllText($"{folder}\\library.json");
+            Game[] games = JsonSerializer.Deserialize<Game[]>(jsonLibrary);
             
             /*
             foreach(Game game in games)
@@ -55,7 +89,7 @@ namespace Legion.Parsers
                     );
             }
             */
-            return Sorter.SortByName(games);
+            return GameSorter.SortByName(games);
         }        
     }
 }

@@ -11,27 +11,36 @@ namespace Legion.Services
 {
     internal class Fetcher
     {
-        public static string FetchExe(string diretorio)
+        private char drive;
+        public Fetcher(char drive)
         {
-            string[] caminhosArquivos;
-
-            try
-            {
-                caminhosArquivos = Directory.GetFiles(diretorio, "*.exe", SearchOption.AllDirectories);
-
-                if (caminhosArquivos[0] == null)
-                    return null;
-
-                return caminhosArquivos[0];
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            this.drive = drive;
         }
-        public static Game[] FetchGames(char drive)
+        public char Drive { get; set; }
+
+        public string[] FetchAcf()
         {
-            string[] acfFiles = FetchAcf(drive);
+            string steamappsDir;
+            string[] files;
+            List<string> list = new List<string>();
+
+            // ascii: 65 = A, 90 = Z
+            if (!(drive >= 65 && drive <= 90))
+                return null;
+
+            steamappsDir = $"{drive}:\\SteamLibrary\\steamapps";
+            files = Directory.GetFiles(steamappsDir, "*.acf");
+            foreach (string file in files)
+            {
+                if (!file.Contains("480"))
+                    list.Add(file);
+            }
+
+            return files = list.ToArray();
+        }        
+        public Game[] FetchGamesSteam()
+        {            
+            string[] acfFiles = FetchAcf();
             Game[] games = new Game[acfFiles.Length];
 
             string name = null;
@@ -60,25 +69,23 @@ namespace Legion.Services
             }
             return games;
         }
-        public static string[] FetchAcf(char drive)
+        public static string FetchExe(string diretorio)
         {
-            string steamappsDir;
-            string[] files;
-            List<string> list = new List<string>();
+            string[] caminhosArquivos;
 
-            // ascii: 65 = A, 90 = Z
-            if (!(drive >= 65 && drive <= 90))
-                return null;
-
-            steamappsDir = $"{drive}:\\SteamLibrary\\steamapps";
-            files = Directory.GetFiles(steamappsDir, "*.acf");
-            foreach (string file in files)
+            try
             {
-                if (!file.Contains("480"))
-                    list.Add(file);
-            }
+                caminhosArquivos = Directory.GetFiles(diretorio, "*.exe", SearchOption.AllDirectories);
 
-            return files = list.ToArray();
-        }        
+                if (caminhosArquivos[0] == null)
+                    return null;
+
+                return caminhosArquivos[0];
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

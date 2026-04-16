@@ -13,14 +13,9 @@ namespace Winforms
         public Main()
         {
             InitializeComponent();
-            
-            // Sobrescrever FormBorder
-            
-            //this.FormBorderStyle = FormBorderStyle.None;            
 
-            // END
-
-
+            // TODO: buscar jogos instalados em multiplos discos (fora steam, pois não importa)
+            // feature adicionar e remover jogos manualmente
         }
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -39,7 +34,7 @@ namespace Winforms
 
         private void Main_Load(object sender, EventArgs e)
         {            
-            Game[] games = JsonParser.Read();
+            // adicionar jogo steam: fetch steam games
             
             // Definir propriedades de elementos UI
             //
@@ -48,10 +43,15 @@ namespace Winforms
             gamesPanel.AutoScroll = true;
             //
             // END
-            
+            char[] drives = new char[]
+            {
+                'D'
+            };
+            Library library = new Library(drives);
+            Game[] gameArray = library.LoadGames();
             // Função adicionar botões dinamicamente
             //
-            foreach (Game game in games)
+            foreach (Game game in gameArray)
             {
                 Button btn = new Button();
                 btn.Text = game.Name;

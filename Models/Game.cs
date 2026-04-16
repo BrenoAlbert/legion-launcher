@@ -12,6 +12,7 @@ namespace Legion.Models
         private string name;
         private string appId;
         private string installDir;
+        private string[] tags;
 
         [JsonConstructor]
         public Game(string Name, string AppId, string InstallDir)
@@ -22,6 +23,7 @@ namespace Legion.Models
         }
         public string Name { get; set; }
         public string AppId { get; set; }
-        public string InstallDir { get; set; }                
+        public string InstallDir { get; set; }
+        public string[] Tags { get; set; }
     }
 }
