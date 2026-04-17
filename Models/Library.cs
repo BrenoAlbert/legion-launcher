@@ -18,7 +18,7 @@ namespace Legion.Models
         private string jsonFile = "library.json";
         private string jsonPath;
         private char[] drives;
-        private Game[] games;
+        private List<Game> games;
 
         public Library(char[] drives)
         {
@@ -26,18 +26,20 @@ namespace Legion.Models
             this.drives = drives;
             this.games = JsonParser.ReadLibrary();
         }
+        public string JsonPath { get; set; }
         public string JsonFile { get; set; }
         public string Folder { get; set; }
         public char[] Drives { get; set; }
         public void AddGame(Game newGame)
         {
-
+            JsonParser parser = new JsonParser(jsonFile);
+            parser.WriteLibrary(new List<Game> { newGame });
         }
         public void AddGamesSteam()
         {
             JsonParser parse = new JsonParser(jsonFile);
             Fetcher fetch;
-            Game[] games;
+            List<Game> games;
 
             if (drives.Length < 1)            
                 throw new ArgumentOutOfRangeException(nameof(drives), "Drives (SSD/HDD) are non-existent or invalid!");
@@ -58,12 +60,19 @@ namespace Legion.Models
                 }
             }
         }
-        public void RemoveGame(Game targetGame)
+        public string RemoveGame(Game targetGame)
         {
+            List<Game> gameList = JsonParser.ReadLibrary();
 
+            if (!gameList.Contains(targetGame))
+                return "Error";
+
+            gameList.Remove(targetGame);
+            return targetGame.Name;
         }
-        public Game[] LoadGames()
+        public List<Game> LoadGames()
         {
+            // age como substituto para método get do atributo games
             return JsonParser.ReadLibrary();
         }
     }

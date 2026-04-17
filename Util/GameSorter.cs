@@ -11,27 +11,24 @@ namespace Legion.Util
 {
     internal static class GameSorter
     {
-        public static Game[] SortByName(Game[] gameArray)
+        public static List<Game> SortByName(List<Game> gameParam)
         {
             // essa implementação é meio burra e custosa, mas por enquanto vai ter que funcionar
 
-            string[] sortOrder = new string[gameArray.Length];
+            string[] sortOrder = new string[gameParam.Count];
             Dictionary<string, Game> gameDic = new Dictionary<string, Game>();
 
             for (int i = 0; i < sortOrder.Length; i++)
             {
-                sortOrder[i] = gameArray[i].Name;
-                gameDic.Add(gameArray[i].Name, gameArray[i]);
+                sortOrder[i] = gameParam[i].Name;
+                gameDic.Add(gameParam[i].Name, gameParam[i]);
             }
-
             Array.Sort(sortOrder);
+            
+            for (int i = 0; i < gameParam.Count; i++)            
+                gameParam[i] = gameDic[sortOrder[i]];            
 
-            for (int i = 0; i < gameArray.Length; i++)
-            {
-                gameArray[i] = gameDic[sortOrder[i]];
-            }
-
-            return gameArray;
-        }
+            return gameParam;
+        }        
     }
 }

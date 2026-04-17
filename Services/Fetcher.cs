@@ -38,10 +38,10 @@ namespace Legion.Services
 
             return files = list.ToArray();
         }        
-        public Game[] FetchGamesSteam()
+        public List<Game> FetchGamesSteam()
         {            
             string[] acfFiles = FetchAcf();
-            Game[] games = new Game[acfFiles.Length];
+            List<Game> games = new List<Game>(acfFiles.Length);
 
             string name = null;
             string appId = null;
@@ -49,7 +49,7 @@ namespace Legion.Services
 
             string linha;
 
-            for (int i = 0; i < games.Length; i++)
+            for (int i = 0; i < games.Count; i++)
             {
                 using (StreamReader sr = new StreamReader(acfFiles[i]))
                 {

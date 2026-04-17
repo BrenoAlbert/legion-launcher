@@ -12,10 +12,7 @@ namespace Winforms
     {                       
         public Main()
         {
-            InitializeComponent();
-
-            // TODO: buscar jogos instalados em multiplos discos (fora steam, pois não importa)
-            // feature adicionar e remover jogos manualmente
+            InitializeComponent();           
         }
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -43,12 +40,14 @@ namespace Winforms
             gamesPanel.AutoScroll = true;
             //
             // END
+
             char[] drives = new char[]
             {
                 'D'
             };
             Library library = new Library(drives);
-            Game[] gameArray = library.LoadGames();
+            List<Game> gameArray = library.LoadGames();
+
             // Função adicionar botões dinamicamente
             //
             foreach (Game game in gameArray)

@@ -29,7 +29,7 @@ namespace Legion.Parsers
 
         }
 
-        public async void WriteLibrary(Game[] gamesA)
+        public async void WriteLibrary(List<Game> gamesA)
         {                                    
             JsonSerializerOptions jso = new JsonSerializerOptions
             {
@@ -52,17 +52,17 @@ namespace Legion.Parsers
             // END
 
             if (File.Exists(jsonPath))
-            {                
+            {
                 string gameJson = File.ReadAllText(jsonPath);
-                List<Game> gamesL = JsonSerializer.Deserialize<List<Game>>(gameJson);
-                
+                List<Game> gamesL = JsonSerializer.Deserialize<List<Game>>(gameJson);                
+                                
                 foreach (Game game in gamesA)
                 {
                     if (!gamesL.Contains(game))
                         gamesL.Add(game);
                 }
 
-                gamesA = GameSorter.SortByName(gamesL.ToArray());
+                gamesA = GameSorter.SortByName(gamesL);
                 await createjson();
             }
             else
@@ -72,24 +72,18 @@ namespace Legion.Parsers
             
         }
 
-        public static Game[] ReadLibrary()
+        public static List<Game> ReadLibrary()
         {
             string folder = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Legion"
             );
             string jsonLibrary = File.ReadAllText($"{folder}\\library.json");
-            Game[] games = JsonSerializer.Deserialize<Game[]>(jsonLibrary);
+
+            List<Game> games = GameSorter.SortByName(JsonSerializer.Deserialize<List<Game>>(jsonLibrary));
             
-            /*
-            foreach(Game game in games)
-            {
-                Console.WriteLine(
-                    $"{game.Name}\n"
-                    );
-            }
-            */
-            return GameSorter.SortByName(games);
+           
+            return games;
         }        
     }
 }
