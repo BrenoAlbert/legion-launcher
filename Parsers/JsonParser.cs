@@ -27,8 +27,7 @@ namespace Legion.Parsers
             );
             this.jsonPath = $"{folder}\\{fileName}";
 
-        }
-
+        }        
         public async void WriteLibrary(List<Game> gamesA)
         {                                    
             JsonSerializerOptions jso = new JsonSerializerOptions
@@ -71,7 +70,7 @@ namespace Legion.Parsers
             }
             
         }
-
+        
         public static List<Game> ReadLibrary()
         {
             string folder = Path.Combine(
@@ -81,8 +80,7 @@ namespace Legion.Parsers
             string jsonLibrary = File.ReadAllText($"{folder}\\library.json");
 
             List<Game> games = GameSorter.SortByName(JsonSerializer.Deserialize<List<Game>>(jsonLibrary));
-            
-           
+                       
             return games;
         }        
     }

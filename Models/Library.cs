@@ -18,48 +18,94 @@ namespace Legion.Models
         private string jsonFile = "library.json";
         private string jsonPath;
         private char[] drives;
+        private List<string> directories;
         private List<Game> games;
 
         public Library(char[] drives)
         {
-            this.jsonPath = $"{folder}\\{jsonFile}";
+            jsonPath = $"{folder}\\{jsonFile}";
             this.drives = drives;
-            this.games = JsonParser.ReadLibrary();
+            games = JsonParser.ReadLibrary();
+            directories = new List<string>();
         }
-        public string JsonPath { get; set; }
-        public string JsonFile { get; set; }
-        public string Folder { get; set; }
-        public char[] Drives { get; set; }
+        //
+        public string Folder { get { return this.folder; } set { this.folder = value; } }        
+        public string JsonFile { get { return jsonFile; } set { this.jsonFile = value; } }
+        public string JsonPath { get { return jsonPath; } set { this.jsonPath = value; } }
+        public char[] Drives { get { return drives; } set { this.drives = value; } }
+        public List<string> Directories { get { return directories; } set { this.directories = value; } }
+        public List<Game> Games { get { return games; } set { this.games = value; } }
+        //
+
+        /// <summary>
+        /// Updates games field
+        /// </summary>
+        private void LoadGames()
+        {            
+            games = JsonParser.ReadLibrary();
+        }        
+
+        /// <summary>
+        /// Adds new game to json file then updates games list property
+        /// </summary>
         public void AddGame(Game newGame)
         {
             JsonParser parser = new JsonParser(jsonFile);
             parser.WriteLibrary(new List<Game> { newGame });
-        }
+            LoadGames();
+        }     
+
+        /// <summary>
+        /// Adds all installed steam games to games list field
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void AddGamesSteam()
         {
             JsonParser parse = new JsonParser(jsonFile);
             Fetcher fetch;
-            List<Game> games;
+            List<Game> newGames, allGames = JsonParser.ReadLibrary();
+            
 
-            if (drives.Length < 1)            
-                throw new ArgumentOutOfRangeException(nameof(drives), "Drives (SSD/HDD) are non-existent or invalid!");
-
-            else if (drives.Length == 1)
-            {
-                fetch = new Fetcher(drives[0]);
-                games = fetch.FetchGamesSteam();
-                parse.WriteLibrary(games);
-            }
-            else
+            if (drives.Length > 0)
             {
                 foreach (char drive in drives)
-                {
+                {                    
                     fetch = new Fetcher(drive);
-                    games = fetch.FetchGamesSteam();
-                    parse.WriteLibrary(games);
+                    newGames = fetch.FetchGamesSteam();
+
+                    foreach (Game objGame in newGames)
+                    {
+                        if (games.Contains(objGame))
+                            allGames.Add(objGame);
+                    }                    
                 }
-            }
+                parse.WriteLibrary(allGames);
+            }                    
+            else
+                throw new ArgumentOutOfRangeException(nameof(drives), "Drives (SSD/HDD) are non-existent or invalid!");
+            
+            LoadGames();
         }
+        public void AddGamesBulk(string mainDirectory) // TODO: actually write the returned game paths into the json
+        {
+            JsonParser parser = new JsonParser(jsonFile);            
+            List<Game> allGames = games;            
+            string[] exePath = Fetcher.FetchAllExe(mainDirectory);
+            
+            directories.Add(mainDirectory);
+            foreach (string path in exePath)
+            {
+                Console.WriteLine(path);
+            }
+            
+        }
+        
+        /// <summary>
+        /// Reads the library json, checks if game exists
+        /// then removes from List and rewrites json.
+        /// </summary>
+        /// <param name="targetGame">Object from Game class to be removed from the library</param>
+        /// <returns>Returns the name of the removed game. Error if game cannot be located</returns>
         public string RemoveGame(Game targetGame)
         {
             List<Game> gameList = JsonParser.ReadLibrary();
@@ -69,11 +115,6 @@ namespace Legion.Models
 
             gameList.Remove(targetGame);
             return targetGame.Name;
-        }
-        public List<Game> LoadGames()
-        {
-            // age como substituto para método get do atributo games
-            return JsonParser.ReadLibrary();
         }
     }
 }

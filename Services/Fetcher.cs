@@ -18,7 +18,11 @@ namespace Legion.Services
         }
         public char Drive { get; set; }
 
-        public string[] FetchAcf()
+        /// <summary>
+        /// Searches the steamapps folder and fetches the acf files from the currently installed steam games
+        /// </summary>
+        /// <returns>Returns a string array containing the full path of all acf files</returns>
+        private string[] FetchAcf()
         {
             string steamappsDir;
             string[] files;
@@ -38,6 +42,11 @@ namespace Legion.Services
 
             return files = list.ToArray();
         }        
+
+        /// <summary>
+        /// Extracts the relevant info out of the acf files (uses FetchAcf method)
+        /// </summary>
+        /// <returns>Returns a list of Game objects of all steam games</returns>
         public List<Game> FetchGamesSteam()
         {            
             string[] acfFiles = FetchAcf();
@@ -65,27 +74,51 @@ namespace Legion.Services
                             installDir = AcfParser.ReadLine(linha);
                     }
                 }
-                games[i] = new Game(name, appId, installDir);
+                games.Add(new Game(name, installDir, appId));
             }
             return games;
         }
-        public static string FetchExe(string diretorio)
+
+        /// <summary>
+        /// Goes through param directory and fetches the name of all executable files found
+        /// </summary>        
+        /// <returns>Returns a filtered array containing all the file full paths</returns>
+        public static string[] FetchAllExe(string diretorio)
         {
-            string[] caminhosArquivos;
+            bool found;
+            string[] allExeFiles = Directory.GetFiles(diretorio, "*.exe", SearchOption.AllDirectories);
+            string[] fileName = new string[allExeFiles.Length];
+            Stack<string> filtered = new Stack<string>();
 
-            try
+            for (int i = 0; i < fileName.Length; i++)
             {
-                caminhosArquivos = Directory.GetFiles(diretorio, "*.exe", SearchOption.AllDirectories);
-
-                if (caminhosArquivos[0] == null)
-                    return null;
-
-                return caminhosArquivos[0];
+                fileName[i] = Path.GetFileName(allExeFiles[i]);
             }
-            catch (Exception e)
+
+            string[] filters = new string[] // write all filters in lowered char
             {
-                return null;
+                "launcher", "installer", "uninstall", "unins000", "shipping", "oalinst",
+                "unitycrashhandler", "helper", "crash", "report", "redist", "setup", "browser", "x86"
+            };
+            
+            // Logic stars here
+            for (int i = 0; i < fileName.Length; i++)
+            {
+                found = false;
+                for (int j = 0; j < filters.Length; j++)
+                {
+                    if (fileName[i].Contains(filters[j], StringComparison.OrdinalIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    filtered.Push(allExeFiles[i]);
             }
+
+            return filtered.ToArray();
         }
     }
 }

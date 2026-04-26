@@ -46,7 +46,7 @@ namespace Winforms
                 'D'
             };
             Library library = new Library(drives);
-            List<Game> gameArray = library.LoadGames();
+            List<Game> gameArray = library.Games;
 
             // Função adicionar botões dinamicamente
             //
@@ -74,11 +74,12 @@ namespace Winforms
                     }
                 };
 
-                gamesPanel.Controls.Add(btn);
-                
+                gamesPanel.Controls.Add(btn);                
             }
             //
             // END                        
+
+            library.AddGamesBulk("D:\\Games");
         }
     }
 }

@@ -15,15 +15,15 @@ namespace Legion.Models
         private string[] tags;
 
         [JsonConstructor]
-        public Game(string Name, string AppId, string InstallDir)
+        public Game(string Name, string InstallDir, string AppId = null)
         {
-            this.Name = Name;
-            this.AppId = AppId;
+            this.Name = Name;            
             this.InstallDir = InstallDir;
+            this.AppId = AppId;
         }
-        public string Name { get; set; }
-        public string AppId { get; set; }
-        public string InstallDir { get; set; }
-        public string[] Tags { get; set; }
+        public string Name { get { return this.name; } set { this.name = value; } }
+        public string AppId { get { return this.appId; } set { this.appId = value; } }
+        public string InstallDir { get { return this.installDir; } set { this.installDir = value; } }
+        public string[] Tags { get { return this.tags; } set { this.tags = value; } }
     }
 }
