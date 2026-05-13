@@ -17,9 +17,15 @@ namespace Legion.Models
         [JsonConstructor]
         public Game(string Name, string InstallDir, string AppId = null)
         {
-            this.Name = Name;            
-            this.InstallDir = InstallDir;
-            this.AppId = AppId;
+            this.name = Name;            
+            this.installDir = InstallDir;
+            this.appId = AppId;
+            this.tags = new string[10];
+
+            if (appId != null)
+            {
+                tags[0] = "Steam";
+            }
         }
         public string Name { get { return this.name; } set { this.name = value; } }
         public string AppId { get { return this.appId; } set { this.appId = value; } }

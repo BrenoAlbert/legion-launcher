@@ -83,16 +83,16 @@ namespace Legion.Services
         /// Goes through param directory and fetches the name of all executable files found
         /// </summary>        
         /// <returns>Returns a filtered array containing all the file full paths</returns>
-        public static string[] FetchAllExe(string diretorio)
+        public static List<Game> FetchAllExe(string diretorio)
         {
             bool found;
-            string[] allExeFiles = Directory.GetFiles(diretorio, "*.exe", SearchOption.AllDirectories);
-            string[] fileName = new string[allExeFiles.Length];
-            Stack<string> filtered = new Stack<string>();
+            string[] allExePaths = Directory.GetFiles(diretorio, "*.exe", SearchOption.AllDirectories);
+            string[] fileName = new string[allExePaths.Length];
+            List<Game> filtered = new List<Game>();
 
             for (int i = 0; i < fileName.Length; i++)
             {
-                fileName[i] = Path.GetFileName(allExeFiles[i]);
+                fileName[i] = Path.GetFileName(allExePaths[i]);
             }
 
             string[] filters = new string[] // write all filters in lowered char
@@ -101,7 +101,10 @@ namespace Legion.Services
                 "unitycrashhandler", "helper", "crash", "report", "redist", "setup", "browser", "x86"
             };
             
-            // Logic stars here
+            // =============================
+            // --    Logic starts here    --
+            // =============================
+
             for (int i = 0; i < fileName.Length; i++)
             {
                 found = false;
@@ -115,10 +118,10 @@ namespace Legion.Services
                 }
 
                 if (!found)
-                    filtered.Push(allExeFiles[i]);
+                    filtered.Add(new Game(fileName[i].Substring(0, fileName[i].Length - 4), allExePaths[i]));
             }
 
-            return filtered.ToArray();
+            return filtered;
         }
     }
 }

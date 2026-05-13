@@ -86,18 +86,26 @@ namespace Legion.Models
             
             LoadGames();
         }
+
+        /// <summary>
+        /// Gets games from param mainDirectory then adds to games list field and json
+        /// </summary>
+        /// <param name="mainDirectory">Directory of the folder containing installed games without a launcher or in custom directory</param>
         public void AddGamesBulk(string mainDirectory) // TODO: actually write the returned game paths into the json
         {
             JsonParser parser = new JsonParser(jsonFile);            
             List<Game> allGames = games;            
-            string[] exePath = Fetcher.FetchAllExe(mainDirectory);
+            List<Game> exePath = Fetcher.FetchAllExe(mainDirectory);
             
             directories.Add(mainDirectory);
-            foreach (string path in exePath)
+
+            foreach (Game game in exePath)
             {
-                Console.WriteLine(path);
+                Console.WriteLine(game.Name + " " + game.AppId + " " + game.InstallDir);                
             }
-            
+
+            parser.WriteLibrary(exePath);
+            LoadGames();
         }
         
         /// <summary>
@@ -115,6 +123,36 @@ namespace Legion.Models
 
             gameList.Remove(targetGame);
             return targetGame.Name;
+        }
+
+        public void RemoveDuplicate() // TODO: optimize this method w/ linq
+        {            
+            List<Game> list = JsonParser.ReadLibrary();
+            var dupe = new Dictionary<Game, int>(); // key name, value quantidade            
+            
+            Game elemKey;
+
+            // count occurrences of games, allowing to know how many occurrances to delete
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                if (dupe.ContainsKey(list[i]))
+                    dupe[list[i]]++;
+                else
+                    dupe[list[i]] = 1;                                   
+            }
+            //
+
+            for (int i = 0; i < dupe.Count; i++)
+            {
+                while ( dupe.ElementAt(i).Value > 1)
+                {
+                    elemKey = dupe.ElementAt(i).Key;
+                    RemoveGame(elemKey);
+
+                    dupe[elemKey]--;
+                }
+            }
+            
         }
     }
 }

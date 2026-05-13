@@ -27,41 +27,44 @@ namespace Legion.Parsers
             );
             this.jsonPath = $"{folder}\\{fileName}";
 
-        }        
-        public async void WriteLibrary(List<Game> gamesA)
+        }
+
+        /// <summary>
+        /// Creates a json file of all games saved. 
+        /// <para>Checks if directory of "folder" field exists then creates the directory if false.
+        /// If the json already exists, concatenates the existing and new data then overwrites the previous file.</para>
+        /// </summary>
+        /// <param name="gamesParam">List of all games to be added</param>
+        public async void WriteLibrary(List<Game> gamesParam)
         {                                    
             JsonSerializerOptions jso = new JsonSerializerOptions
             {
                 WriteIndented = true
             };
-            
+
+            var createjson = async () =>
+            {
+                await using FileStream stream = File.Create(jsonPath);
+                await JsonSerializer.SerializeAsync(stream, gamesParam, jso);
+            };
+
             // /////////////////////////////////////////////////////////////
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
-
-            // função anônima para criar arquivo json
-            //
-            var createjson = async () =>
-            {
-                await using FileStream stream = File.Create(jsonPath);
-                await JsonSerializer.SerializeAsync(stream, gamesA, jso);
-            };
-            //
-            // END
-
+            
             if (File.Exists(jsonPath))
             {
                 string gameJson = File.ReadAllText(jsonPath);
                 List<Game> gamesL = JsonSerializer.Deserialize<List<Game>>(gameJson);                
                                 
-                foreach (Game game in gamesA)
+                foreach (Game game in gamesParam)
                 {
                     if (!gamesL.Contains(game))
                         gamesL.Add(game);
                 }
 
-                gamesA = GameSorter.SortByName(gamesL);
+                gamesParam = GameSorter.SortByName(gamesL);
                 await createjson();
             }
             else
@@ -71,6 +74,10 @@ namespace Legion.Parsers
             
         }
         
+        /// <summary>
+        /// Reads the data from the json containing the games seved in Library
+        /// </summary>
+        /// <returns>Returns a list of all games saved in the json file</returns>
         public static List<Game> ReadLibrary()
         {
             string folder = Path.Combine(
