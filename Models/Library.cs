@@ -11,11 +11,8 @@ namespace Legion.Models
 {
     public class Library
     {
-        private string folder = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Legion"
-            );
-        private string jsonFile = "library.json";
+        private string folder;
+        private string jsonFile;
         private string jsonPath;
         private char[] drives;
         private List<string> directories;
@@ -23,10 +20,15 @@ namespace Legion.Models
 
         public Library(char[] drives)
         {
+            folder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Legion"
+            );
+            jsonFile = "library.json";
             jsonPath = $"{folder}\\{jsonFile}";
             this.drives = drives;
-            games = JsonParser.ReadLibrary();
             directories = new List<string>();
+            games = JsonParser.ReadLibrary();                        
         }
         //
         public string Folder { get { return this.folder; } set { this.folder = value; } }        
@@ -110,26 +112,31 @@ namespace Legion.Models
         
         /// <summary>
         /// Reads the library json, checks if game exists
-        /// then removes from List and rewrites json.
+        /// then removes from List, rewrites json and updates "games" field.
         /// </summary>
         /// <param name="targetGame">Object from Game class to be removed from the library</param>
-        /// <returns>Returns the name of the removed game. Error if game cannot be located</returns>
+        /// <returns>Returns the name of the removed game.</returns>
         public string RemoveGame(Game targetGame)
         {
-            List<Game> gameList = JsonParser.ReadLibrary();
+            List<Game> gameList = JsonParser.ReadLibrary();            
+            var parser = new JsonParser(jsonFile);
 
             if (!gameList.Contains(targetGame))
-                return "Error";
+                throw new Exception("Error: Game not found");
 
             gameList.Remove(targetGame);
+
+            parser.WriteLibrary(gameList);
+            LoadGames();
+
             return targetGame.Name;
         }
 
         public void RemoveDuplicate() // TODO: optimize this method w/ linq
         {            
             List<Game> list = JsonParser.ReadLibrary();
-            var dupe = new Dictionary<Game, int>(); // key name, value quantidade            
-            
+            var parser = new JsonParser(jsonFile);
+            var dupe = new Dictionary<Game, int>(); // key name, value quant                        
             Game elemKey;
 
             // count occurrences of games, allowing to know how many occurrances to delete
@@ -140,7 +147,6 @@ namespace Legion.Models
                 else
                     dupe[list[i]] = 1;                                   
             }
-            //
 
             for (int i = 0; i < dupe.Count; i++)
             {
@@ -149,10 +155,11 @@ namespace Legion.Models
                     elemKey = dupe.ElementAt(i).Key;
                     RemoveGame(elemKey);
 
-                    dupe[elemKey]--;
+                    dupe[elemKey].Value--;
                 }
-            }
-            
+            }            
+            // no need to update the json file and the list field here
+            // method RemoveGame already does that.
         }
     }
 }

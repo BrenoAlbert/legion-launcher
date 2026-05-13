@@ -48,7 +48,7 @@ namespace Legion.Parsers
                 await JsonSerializer.SerializeAsync(stream, gamesParam, jso);
             };
 
-            // /////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
