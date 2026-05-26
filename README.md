@@ -1,5 +1,5 @@
 ﻿# ⚔️ Legion Launcher
-O projeto Legion tem o objetivo de agrupar todos os jogos instalados na máquina em uma só interface, oferecendo suporte às maiores lojas digitais de jogos como Steam, Epic Games, GOG, etc.
+O projeto Legion Launcher tem o objetivo de agrupar todos os jogos instalados na máquina em uma só interface, oferecendo suporte às maiores lojas digitais de jogos como Steam, Epic Games, GOG, etc.
 
 ## 📝 Checklist
 - [x] Suporte overlay Steam
